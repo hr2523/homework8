@@ -1,0 +1,46 @@
+# calculation method from HW7
+def calculate_score(score_data):
+    wins, losses, ties = score_data[1], score_data[2], score_data[3]
+    total_games = wins + losses + ties
+    score = (wins + 0.5 * ties) / total_games
+    return score
+
+
+# sorting
+def sort_team(input_data):
+    input_data.sort(key=calculate_score, reverse=True)  # based on the calculated score, it sorts and reverse the order
+    return input_data
+
+
+# reading the team data
+def read_data(input_file):
+    with open(input_file, 'r') as file:  # open the input file
+        teams = []  # sets an array to store data for each teams
+        for line in file:  # going line by line in the file
+            team_data = (line.split('\t'))  # based on the line splitting it
+            teams.append([team_data[0], int(team_data[1]), int(team_data[2]), int(team_data[3])])
+            # putting data from each line to array
+    file.close()  # closing input file
+    return teams
+
+
+# writing the team data
+def write_data(output_file, sorted_teams):
+    with open(output_file, 'w') as file:  # opening a file to write
+        for team_data in sorted_teams: # going through sorted_teams
+            Full_data = "" # setting variable to store full data
+            for data in team_data: # going through each data in team data
+                Full_data += str(data) + '\t' # adding each data from team data to the variable
+            file.write(Full_data + '\n') # writing full datat to ouput file
+    file.close() # closing output file
+
+
+def question_3():
+    input_file = 'Intro to CompProg HW8.tsv'
+    team_data = read_data(input_file)
+    sorted_teams = sort_team(team_data)
+    output_file = 'sorted_teams.tsv'
+    write_data(output_file, sorted_teams)
+
+
+question_3()
