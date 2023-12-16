@@ -1,0 +1,25 @@
+def question2():
+    input_file = 'paragraph_from_wikipedia.txt'
+    output_file = 'paragraph_from_wikipedia.vowel_profile'
+    with open(input_file, 'r') as instream:  # opening input file
+        vowels = ['a', 'e', 'i', 'o', 'u']  # setting vowel array
+        vowel_count = [0, 0, 0, 0, 0]  # setting vowel count array
+        char = instream.read(1)  # reading character by character
+
+        while char != "":
+            lower_char = char.lower()  # changing to lowercase
+
+            if lower_char in vowels:
+                index = vowels.index(lower_char)  # finding corresponding vowel
+                vowel_count[index] += 1  # counting the vowel
+
+            char = instream.read(1)  # keep reading
+
+    with open(output_file, 'w') as outstream:
+        for i in range(len(vowels)):
+            outstream.write(vowels[i].upper() + " Frequency: " + str(vowel_count[i]) + "\n")
+        outstream.close()
+    instream.close()
+
+
+question2()
