@@ -1,0 +1,40 @@
+# question 1
+def question1():
+    print("This function returns a random list of integers as per user specifications")
+    low = int(input("The low end of the range is: ")) # setting low based on user input
+    high = int(input("The high end of the range is: ")) # setting high based on user input
+
+    # Check if the range is valid
+    while high <= low:
+        print("Error: High must be greater than low.")
+        low = int(input("Enter the low end of the range again: "))
+        high = int(input("Enter the high end of the range again: "))
+
+    # Get the number of integers from the user
+    how_many = int(input("How many numbers? "))
+
+    # Initialize an empty list to store the selected numbers
+    numbers = []
+
+    # Loop to get how_many numbers within the specified range
+    while len(numbers) < how_many:
+        choice = input(f"Pick a number from {low} to {high}")
+
+        try:
+            num = int(choice)
+
+            # Check if the number is within the valid range
+            if low <= num <= high:
+                print(f"Number {num} accepted")
+                numbers.append(num) # adding user input to array
+            else:
+                print("Choose an acceptable number") # when the value is out of range
+
+        except ValueError: # if different type of data was inputted
+            print("That number was no good. Try again")
+
+    print(numbers)
+
+
+# Example usage
+question1()
