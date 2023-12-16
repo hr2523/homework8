@@ -1,0 +1,80 @@
+def check_input_file(Max_stars, input_file):
+    with open(input_file, 'r') as file:
+        rows = file.readlines()  # storing each line to lines
+
+    # Check if the file is a .tsv file
+    if not input_file.endswith('.tsv'):  # if the file doesn't end with
+        raise Exception('File is not a .tsv file.')
+
+    # Check if the first column header is "Customer Number"
+    headers = rows[0].strip().split('\t')
+    if headers[0] != 'Customer Number':
+        raise Exception('First column header is not "Customer Number".')
+
+    # Check if all lines have the same number of columns
+    num_columns = len(headers)
+    reviews = [] # set an array to store data for review
+    for row in rows[1:]:  # iterate over rows[1:] instead of headers[1:]
+        item = row.strip().split('\t') # for each row, each data is split based on  tab
+        reviews.append(item) # each item added to reviews array
+        if len(item) != num_columns: # if row's length is not matching to number of columns
+            raise Exception(f'Inconsistent number of columns. There are {num_columns} headers.')
+
+    # Check and update ratings
+    max_customer_number = len(rows) - 1  # Subtracting 1 to exclude the header row
+
+    for item in reviews:
+        ratings = item[1:] # only gathering rating from each item in reviews
+        for rating in ratings: # for each rating in ratings
+            rating_value = float(rating)  # change it into float value and store in to rating_value
+            if rating_value > Max_stars or rating_value < 1: # when the value is out of range
+                raise Exception(f'Rating value {rating_value} is not between 1 and {Max_stars}')
+
+    return headers, reviews, max_customer_number
+
+
+def collect_and_update_reviews(Max_stars, input_file):
+    headers, reviews, max_customer_number = check_input_file(Max_stars, input_file)
+
+    additional_reviews = input('Would you like to add an additional set of reviews? Yes or No: ')
+
+    while additional_reviews.lower() == 'yes':
+        new_review = []
+        for header in headers[1:]: # for each place
+            new_rating = float(input(f'How many stars would you give to {header}? ')) # ask the rating
+            while new_rating < 1 or new_rating > Max_stars: # when it is out of range
+                print(f'Invalid rating. Please enter a rating between 1 and {Max_stars}.')
+                new_rating = float(input(f'How many stars would you give to {header}? '))
+            new_review.append(new_rating)
+
+        max_customer_number += 1 # update maximum customer number
+        reviews.append([max_customer_number] + new_review) # adds new set of rating to reviews array
+
+        additional_reviews = input('Would you like to add an additional set of reviews? Yes or No: ')
+
+    # Calculate and print average star ratings
+    print('Average Star Ratings')
+    for i in range(1, len(headers)):
+        header = headers[i]
+        ratings = []
+        for value in reviews: # for each value in reviews
+            ratings.append(float(value[i])) # add it to ratings array
+        average_rating = sum(ratings) / len(ratings) # calculate average
+        print(f'{header}\t{average_rating:.2f}')
+
+    # Update the input file with user-added data
+    with open(input_file, 'w') as file:
+        file.write(headers[0]) # write 'customer Number'
+        for header in headers[1:]:
+            file.write('\t' + header) # write each place name
+        file.write('\n') # next line
+
+        # Write reviews
+        for item in reviews:
+            file.write(str(item[0])) # write customer number value
+            for rating in item[1:]:
+                file.write('\t' + str(rating)) # write ratings
+            file.write('\n')
+
+# Example usage:
+collect_and_update_reviews(5, 'healthfood_cereals.tsv')
